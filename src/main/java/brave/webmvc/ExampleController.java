@@ -26,7 +26,7 @@ public class ExampleController {
     Random random = new Random();
     Thread.sleep(random.nextInt(1000));
 
-    return template.getForObject("http://localhost:8081/b", String.class);
+    return template.getForObject("http://localhost:8080/brave-webmvc-example/b", String.class);
   }
 
   @RequestMapping("/b")
