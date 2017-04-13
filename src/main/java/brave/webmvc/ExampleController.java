@@ -25,8 +25,8 @@ public class ExampleController {
   public String a() throws InterruptedException {
     Random random = new Random();
     Thread.sleep(random.nextInt(1000));
-
-    return template.getForObject("http://localhost:8080/brave-webmvc-example/b", String.class);
+    
+    return template.getForObject("http://localhost:8080/brave-webmvc-example/b?name={0}",String.class,"louie");
   }
 
   @RequestMapping("/b")

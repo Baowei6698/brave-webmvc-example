@@ -6,6 +6,9 @@ import com.github.kristofa.brave.http.DefaultSpanNameProvider;
 import com.github.kristofa.brave.http.SpanNameProvider;
 import com.github.kristofa.brave.spring.BraveClientHttpRequestInterceptor;
 import com.github.kristofa.brave.spring.ServletHandlerInterceptor;
+
+import brave.interceptor.CustomServletHandlerInterceptor;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -18,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import zipkin.Span;
+import zipkin.reporter.AsyncReporter;
 import zipkin.reporter.Reporter;
 import zipkin.reporter.Sender;
 import zipkin.reporter.okhttp3.OkHttpSender;
@@ -28,7 +32,7 @@ import zipkin.reporter.okhttp3.OkHttpSender;
  */
 @Configuration
 // import as the interceptors are annotation with javax.inject and not automatically wired
-@Import({BraveClientHttpRequestInterceptor.class, ServletHandlerInterceptor.class})
+@Import({BraveClientHttpRequestInterceptor.class, CustomServletHandlerInterceptor.class})
 public class WebTracingConfiguration extends WebMvcConfigurerAdapter {
 
   /** Configuration for how to send spans to Zipkin */
@@ -40,9 +44,9 @@ public class WebTracingConfiguration extends WebMvcConfigurerAdapter {
 
   /** Configuration for how to buffer spans into messages for Zipkin */
   @Bean Reporter<Span> reporter() {
-    return new LoggingReporter();
+    //return new LoggingReporter();
     // uncomment to actually send to zipkin!
-    //return AsyncReporter.builder(sender()).build();
+    return AsyncReporter.builder(sender()).build();
   }
 
   @Bean Brave brave() {
@@ -55,7 +59,8 @@ public class WebTracingConfiguration extends WebMvcConfigurerAdapter {
   }
 
   @Autowired
-  private ServletHandlerInterceptor serverInterceptor;
+  //private ServletHandlerInterceptor serverInterceptor;
+  private CustomServletHandlerInterceptor serverInterceptor;
 
   @Autowired
   private BraveClientHttpRequestInterceptor clientInterceptor;
